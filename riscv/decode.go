@@ -93,12 +93,16 @@ func decodeS(instr uint32) SType {
 
 // decodeB extracts fields from a B-type instruction.
 func decodeB(instr uint32) BType {
+	imm := ((instr>>31)&1)<<12 |
+		(((instr >> 7) & 1) << 11) |
+		(((instr >> 25) & 0x3F) << 5) |
+		(((instr >> 8) & 0xF) << 1)
 	return BType{
 		Opcode: instr & 0x7F,
 		Funct3: (instr >> 12) & 0x7,
 		Rs1:    (instr >> 15) & 0x1F,
 		Rs2:    (instr >> 20) & 0x1F,
-		Imm:    signExtend(instr>>20, 12),
+		Imm:    signExtend(imm, 13),
 	}
 }
 
