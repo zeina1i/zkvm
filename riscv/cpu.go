@@ -1,6 +1,7 @@
 package riscv
 
 import (
+	"encoding/binary"
 	"errors"
 	"fmt"
 )
@@ -40,22 +41,34 @@ func (c *CPU) WriteReg(i uint32, val uint32) {
 }
 
 // ReadMem32 reads a 32-bit little-endian word from the given address.
-func (c *CPU) ReadMem32(addr uint32) uint32
+func (c *CPU) ReadMem32(addr uint32) uint32 {
+	return binary.LittleEndian.Uint32(c.Mem[addr : addr+4])
+}
 
 // ReadMem16 reads a 16-bit little-endian value from the given address.
-func (c *CPU) ReadMem16(addr uint32) uint16
+func (c *CPU) ReadMem16(addr uint32) uint16 {
+	return binary.LittleEndian.Uint16(c.Mem[addr : addr+2])
+}
 
 // ReadMem8 reads a byte from the given address.
-func (c *CPU) ReadMem8(addr uint32) uint8
+func (c *CPU) ReadMem8(addr uint32) uint8 {
+	return c.Mem[addr]
+}
 
 // WriteMem32 writes a 32-bit little-endian word to the given address.
-func (c *CPU) WriteMem32(addr uint32, val uint32)
+func (c *CPU) WriteMem32(addr uint32, val uint32) {
+	binary.LittleEndian.PutUint32(c.Mem[addr:addr+4], val)
+}
 
 // WriteMem16 writes a 16-bit value to the given address.
-func (c *CPU) WriteMem16(addr uint32, val uint16)
+func (c *CPU) WriteMem16(addr uint32, val uint16) {
+	binary.LittleEndian.PutUint16(c.Mem[addr:addr+2], val)
+}
 
 // WriteMem8 writes a byte to the given address.
-func (c *CPU) WriteMem8(addr uint32, val uint8)
+func (c *CPU) WriteMem8(addr uint32, val uint8) {
+	c.Mem[addr] = val
+}
 
 // Step fetches, decodes, and executes one instruction. Returns an error
 // if the instruction is illegal or the CPU halts (ecall/ebreak).
